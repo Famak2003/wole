@@ -1,8 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.{js,ts,jsx,tsx}", 
+    "./App.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./screens/**/*.{js,ts,jsx,tsx}",
   ],
+
   theme: {
     extend: {
       colors: {
@@ -13,7 +17,7 @@ module.exports = {
         headerColor: "#202C45",
         hightlight: "#4F46E5",
         b_divider: "#d1d5db",
-        light_grey: "#595959",
+        light_grey: "#e9e9e9",
         dark: "#171717",
         dark_side: "#212121e6",
         primary_light_grey: "#FaFaFa",
@@ -25,7 +29,7 @@ module.exports = {
         deep_red: "#E51E25",
         cool_red: "#E40613",
         base_yellow: "#D7DD17",
-        light_gray: "#c7c7c7",
+        light_gray: "#e9e9e9",
         text_light_gray: "#bebebe",
         base_gray: "#757575",
         body_bg: "#fafafa",
@@ -59,9 +63,13 @@ module.exports = {
         custom_shad5: " rgba(0, 0, 0, 0.35) 0px 0px 5px 0px",
         custom_shad6: " rgba(255, 255, 255, 0.35) 0px 0px 5px 0px",
         custom_shad7: " rgba(255, 255, 255, 0.35) 0px 3px 5px 0px",
+      },
+      fontFamily: {
+        sans: ['var(--font-montserrat)', 'sans-serif']
       }
     },
   },
   plugins: [],
+  darkMode: 'class'
 }
 

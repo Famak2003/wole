@@ -1,7 +1,4 @@
-// store.ts
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-// import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   persistReducer,
   FLUSH,
@@ -11,26 +8,56 @@ import {
   PURGE,
   REGISTER,
   persistStore,
-  Persistor,
 } from "redux-persist";
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+// import { apiSlice } from './api';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import authReducer from './slices/authSlice'; 
 
-import authReducer from './slices/authSlice'; // example slice
 
-const rootReducer = combineReducers({
-  auth: authReducer,
-  // add other reducers here
-});
-
-const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: ['auth'], // only persist this reducer
+type NoopStorage = {
+  getItem: (key: string) => Promise<null>;
+  setItem: (key: string, value: string) => Promise<any>;
+  removeItem: (key: string) => Promise<void>;
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const rootReducer = combineReducers({
+    auth: authReducer,
+    // add other reducers here
+});
 
-export const store = configureStore({
-  reducer: persistedReducer,
+const createNoopStorage = (): NoopStorage => {
+  return {
+    getItem(_key: string) {
+      return Promise.resolve(null);
+    },
+    setItem(_key: string, value: any) {
+      return Promise.resolve(value);
+    },
+    removeItem(_key: string) {
+      return Promise.resolve();
+    },
+  };
+};
+
+// define persist configuration
+const persistConfig = {
+  key: "root",
+  version: 1,
+//   blacklist: ['system', 'users', 'dashboard' ],  
+  storage:
+    typeof window === "undefined"
+      ? createNoopStorage()
+      : createWebStorage("local"),
+};
+
+const persistReducers = persistReducer(persistConfig, rootReducer)
+
+
+
+const store = configureStore({
+  reducer: persistReducers,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -39,15 +66,13 @@ export const store = configureStore({
     }),
 });
 
+// setup listeners for persisting redux state
+setupListeners(store.dispatch);
 
-// export const persistor = persistStore(store);
-
-export let persistor: Persistor;
-if (typeof window !== 'undefined') {
-  persistor = persistStore(store);
-}
-
-
-// types
+// define types for root state and app dispatch
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const persistor = persistStore(store);
+export default store;

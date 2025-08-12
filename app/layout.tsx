@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
-import { Provider } from "react-redux";
-import { persistor, store } from "@/lib/redux/store";
-import { PersistGate } from "redux-persist/integration/react";
 import ReduxProvider from "./ReduxProvider";
+
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,6 +17,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-montserrat',
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${montserrat.variable} antialiased `}
       >
         <ReduxProvider>
             {children}
